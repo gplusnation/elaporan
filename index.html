@@ -1,0 +1,936 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>E-Laporan | Portal Laporan</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'] },
+                    colors: { primary: '#4F46E5', secondary: '#10B981' }
+                }
+            }
+        }
+    </script>
+    <style>
+        .view-section { display: none; }
+        .view-section.active { display: block; animation: fadeIn 0.3s ease-in-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #f1f1f1; }
+        ::-webkit-scrollbar-thumb { background: #c1c1c1; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #a8a8a8; }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800 antialiased min-h-screen flex flex-col">
+
+    <!-- Top Navigation (Hidden on Login/Register) -->
+    <nav id="topNav" class="bg-primary text-white shadow-md hidden">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16 items-center">
+                <div class="flex-shrink-0 flex items-center font-bold text-xl">
+                    <i class="fa-solid fa-feather-alt mr-2"></i> E-Laporan
+                </div>
+                <div class="flex items-center gap-4">
+                    <span id="userNameDisplay" class="text-sm font-medium hidden sm:block"></span>
+                    <button onclick="logout()" class="bg-white/20 hover:bg-white/30 px-3 py-1.5 rounded-lg text-sm transition">
+                        <i class="fa-solid fa-sign-out-alt mr-1"></i> Keluar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="flex-grow flex items-center justify-center p-4">
+
+        <!-- ================= LOGIN VIEW ================= -->
+        <div id="loginView" class="view-section active w-full max-w-md">
+            <div class="bg-white rounded-2xl shadow-xl p-8">
+                <div class="text-center mb-8">
+                    <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-primary/10 text-primary mb-4">
+                        <i class="fa-solid fa-feather-alt text-3xl"></i>
+                    </div>
+                    <h2 class="text-2xl font-bold text-gray-900">Selamat Datang</h2>
+                    <p class="text-gray-500 text-sm mt-1">Silakan masuk ke akun Anda</p>
+                </div>
+                <form id="loginForm" onsubmit="handleLogin(event)" class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                        <input type="email" id="logEmail" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary outline-none transition">
+                    </div>
+                    <div>
+                        <div class="flex justify-between items-center mb-1">
+                            <label class="block text-sm font-medium text-gray-700">Password</label>
+                            
+                        </div>
+                        <input type="password" id="logPassword" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary outline-none transition">
+                        <a href="#" onclick="switchView('forgotView')" class="text-xs text-primary hover:underline">Lupa Password?</a>
+                    </div>
+                    <button type="submit" class="w-full bg-primary hover:bg-indigo-700 text-white font-semibold py-2.5 rounded-lg transition shadow-md">
+                        Masuk
+                    </button>
+                </form>
+                <div class="mt-6 text-center text-sm text-gray-600">
+                    Belum punya akun? <a href="#" onclick="switchView('registerView')" class="text-primary font-semibold hover:underline">Daftar sekarang</a>
+                </div>
+            </div>
+            <!-- Petunjuk Guru Default -->
+            <div class="mt-4 text-xs text-center text-gray-400">
+                copyright 2026<br> Dev by gplusnation
+            </div>
+        </div>
+
+        <!-- ================= REGISTER VIEW ================= -->
+        <div id="registerView" class="view-section w-full max-w-md">
+            <div class="bg-white rounded-2xl shadow-xl p-8">
+                <div class="text-center mb-6">
+                    <h2 class="text-2xl font-bold text-gray-900">Daftar Akun Anggota</h2>
+                    <p class="text-gray-500 text-sm mt-1">Lengkapi data diri Anda di bawah ini</p>
+                </div>
+                <form id="registerForm" onsubmit="handleRegister(event)" class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Nama Lengkap</label>
+                        <input type="text" id="regNama" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary outline-none transition">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                        <input type="email" id="regEmail" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary outline-none transition">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Nomor WhatsApp</label>
+                        <input type="tel" id="regWA" required placeholder="628xx..." class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary outline-none transition">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Buat Password</label>
+                        <input type="password" id="regPassword" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary outline-none transition">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Ulangi Password</label>
+                        <input type="password" id="regConfirmPassword" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary outline-none transition">
+                    </div>
+                    <button type="submit" class="w-full bg-primary hover:bg-indigo-700 text-white font-semibold py-2.5 rounded-lg transition shadow-md mt-2">
+                        Daftar
+                    </button>
+                </form>
+                <div class="mt-6 text-center text-sm text-gray-600">
+                    Sudah punya akun? <a href="#" onclick="switchView('loginView')" class="text-primary font-semibold hover:underline">Masuk di sini</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= FORGOT PASSWORD VIEW ================= -->
+        <div id="forgotView" class="view-section w-full max-w-md">
+            <div class="bg-white rounded-2xl shadow-xl p-8">
+                <div class="text-center mb-6">
+                    <div class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-yellow-100 text-yellow-600 mb-4">
+                        <i class="fa-solid fa-key text-xl"></i>
+                    </div>
+                    <h2 class="text-2xl font-bold text-gray-900">Lupa Password?</h2>
+                    <p class="text-gray-500 text-sm mt-1">Kami akan mengirimkan password ke email Anda.</p>
+                </div>
+                <form id="forgotForm" onsubmit="handleForgot(event)" class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Email Terdaftar</label>
+                        <input type="email" id="forgotEmail" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary outline-none transition">
+                    </div>
+                    <button type="submit" class="w-full bg-yellow-500 hover:bg-yellow-600 text-white font-semibold py-2.5 rounded-lg transition shadow-md">
+                        Kirim Email Pemulihan
+                    </button>
+                </form>
+                <div class="mt-6 text-center text-sm">
+                    <a href="#" onclick="switchView('loginView')" class="text-gray-500 hover:text-gray-800"><i class="fa-solid fa-arrow-left mr-1"></i> Kembali ke Login</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= STUDENT DASHBOARD ================= -->
+        <div id="studentDashboard" class="view-section w-full max-w-4xl self-start mt-4">
+            <!-- Tabs -->
+            <div class="flex space-x-2 bg-white p-2 rounded-xl shadow-sm mb-6 overflow-x-auto">
+                <button onclick="switchStudentTab('tugas-baru')" id="btn-tugas-baru" class="flex-1 py-2 px-4 rounded-lg font-medium text-sm transition bg-primary text-white">
+                    <i class="fa-solid fa-book-open mr-2"></i>Laporan Baru
+                </button>
+                <button onclick="switchStudentTab('tugas-saya')" id="btn-tugas-saya" class="flex-1 py-2 px-4 rounded-lg font-medium text-sm transition text-gray-500 hover:bg-gray-100">
+                    <i class="fa-solid fa-folder-open mr-2"></i>Laporan Saya
+                </button>
+            </div>
+
+            <!-- Tab Content: Tugas Baru -->
+            <div id="tab-tugas-baru" class="space-y-4">
+                <div id="studentTasksList" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <!-- Cards will be injected here via JS -->
+                </div>
+            </div>
+
+            <!-- Tab Content: Tugas Saya -->
+            <div id="tab-tugas-saya" class="hidden">
+                <div class="bg-white rounded-xl shadow-sm overflow-hidden">
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full divide-y divide-gray-200">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Laporan</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Waktu Submit</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">File</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="studentSubmissionsList" class="bg-white divide-y divide-gray-200">
+                                <!-- Data injected via JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= TEACHER DASHBOARD ================= -->
+        <div id="teacherDashboard" class="view-section w-full max-w-6xl self-start mt-4">
+            <!-- Tabs -->
+            <div class="flex space-x-2 bg-white p-2 rounded-xl shadow-sm mb-6 overflow-x-auto">
+                <button onclick="switchTeacherTab('semua-tugas')" id="btn-semua-tugas" class="flex-1 py-2 px-4 rounded-lg font-medium text-sm transition bg-secondary text-white">
+                    <i class="fa-solid fa-list-check mr-2"></i>Daftar Laporan
+                </button>
+                <button onclick="switchTeacherTab('buat-tugas')" id="btn-buat-tugas" class="flex-1 py-2 px-4 rounded-lg font-medium text-sm transition text-gray-500 hover:bg-gray-100">
+                    <i class="fa-solid fa-plus-circle mr-2"></i>Permintaan Submit Laporan
+                </button>
+                <button onclick="switchTeacherTab('daftar-siswa')" id="btn-daftar-siswa" class="flex-1 py-2 px-4 rounded-lg font-medium text-sm transition text-gray-500 hover:bg-gray-100">
+                    <i class="fa-solid fa-users mr-2"></i>Daftar Anggota
+                </button>
+            </div>
+
+            <!-- Tab: Semua Pengumpulan (Dengan Filter) -->
+            <div id="tab-semua-tugas" class="space-y-4">
+                <div class="bg-white p-4 rounded-xl shadow-sm flex flex-col sm:flex-row gap-4 items-end">
+                    <div class="w-full sm:w-1/3">
+                        <label class="block text-xs font-medium text-gray-500 mb-1">Filter Laporan</label>
+                        <select id="filterTask" onchange="renderTeacherSubmissions()" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm outline-none">
+                            <option value="ALL">Semua Laporan</option>
+                        </select>
+                    </div>
+                    <div class="w-full sm:w-1/3">
+                        <label class="block text-xs font-medium text-gray-500 mb-1">Filter Anggota</label>
+                        <input type="text" id="filterStudent" oninput="renderTeacherSubmissions()" placeholder="Ketik nama anggota" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm outline-none">
+                    </div>
+                    <div class="w-full sm:w-1/3">
+                        <button onclick="fetchTeacherData()" class="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium py-2 rounded-lg transition text-sm">
+                            <i class="fa-solid fa-rotate-right mr-1"></i> Refresh Data
+                        </button>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-xl shadow-sm overflow-hidden">
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full divide-y divide-gray-200">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Anggota</th>
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Laporan</th>
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Waktu</th>
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase text-center">File</th>
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase text-center">Aksi & Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="teacherSubmissionsList" class="bg-white divide-y divide-gray-200 text-sm">
+                                <!-- Data injected via JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab: Buat Tugas Baru -->
+            <div id="tab-buat-tugas" class="hidden">
+                <div class="bg-white rounded-xl shadow-sm p-6 max-w-2xl mx-auto">
+                    <h3 class="text-lg font-bold mb-4 border-b pb-2">Form Permintaan Submit Laporan</h3>
+                    <form id="createTaskForm" onsubmit="handleCreateTask(event)" class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Judul Laporan</label>
+                            <input type="text" id="taskTitle" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-secondary outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Deskripsi / Arahan</label>
+                            <textarea id="taskDesc" required rows="4" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-secondary outline-none"></textarea>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Batas Waktu (Deadline)</label>
+                            <input type="datetime-local" id="taskDeadline" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-secondary outline-none">
+                        </div>
+                        <button type="submit" class="w-full bg-secondary hover:bg-green-600 text-white font-semibold py-2.5 rounded-lg transition shadow-md mt-4">
+                            <i class="fa-solid fa-paper-plane mr-2"></i> Publikasikan
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Tab: Daftar Siswa -->
+            <div id="tab-daftar-siswa" class="hidden">
+                <div class="bg-white rounded-xl shadow-sm overflow-hidden">
+                    <div class="p-4 border-b flex justify-between items-center bg-gray-50">
+                        <h3 class="font-bold text-gray-700">Daftar Anggota</h3>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full divide-y divide-gray-200">
+                            <thead class="bg-white">
+                                <tr>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Nama Lengkap</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Email</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">No WA</th>
+                                    <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody id="teacherStudentsList" class="bg-white divide-y divide-gray-200 text-sm">
+                                <!-- Data injected via JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Modal Upload Tugas -->
+    <div id="uploadModal" class="fixed inset-0 bg-black/50 hidden items-center justify-center z-50 p-4">
+        <div class="bg-white rounded-xl shadow-2xl w-full max-w-md overflow-hidden transform transition-all scale-95 opacity-0" id="uploadModalContent">
+            <div class="bg-primary p-4 flex justify-between items-center text-white">
+                <h3 class="font-bold text-lg">Submit Laporan</h3>
+                <button onclick="closeUploadModal()" class="text-white hover:text-gray-200"><i class="fa-solid fa-xmark text-xl"></i></button>
+            </div>
+            <div class="p-6">
+                <p id="uploadTaskTitle" class="font-semibold text-gray-800 mb-1">Judul Laporan</p>
+                <p id="uploadTaskDesc" class="text-sm text-gray-500 mb-4 bg-gray-50 p-2 rounded border">Deskripsi</p>
+                
+                <form id="uploadForm" onsubmit="handleUploadTask(event)">
+                    <div class="border-2 border-dashed border-gray-300 rounded-xl p-6 text-center mb-4 hover:bg-gray-50 transition cursor-pointer relative" id="dropzone">
+                        <i class="fa-solid fa-cloud-arrow-up text-4xl text-primary mb-2"></i>
+                        <p class="text-sm text-gray-600 font-medium">Klik untuk memilih file</p>
+                        <p class="text-xs text-gray-400 mt-1">PDF, DOCX, XLSX, JPG, PNG (Max: 10MB)</p>
+                        <input type="file" id="fileInput" required class="absolute inset-0 w-full h-full opacity-0 cursor-pointer" onchange="updateFileName()">
+                    </div>
+                    <div id="fileNameDisplay" class="hidden text-sm text-secondary font-medium mb-4 flex items-center justify-center bg-green-50 py-2 rounded-lg">
+                        <i class="fa-solid fa-file-check mr-2"></i> <span id="theName"></span>
+                    </div>
+                    
+                    <button type="submit" id="btnUploadSubmit" class="w-full bg-primary hover:bg-indigo-700 text-white font-semibold py-2.5 rounded-lg transition shadow-md">
+                        Mulai Upload
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Detail Profil & Tugas Siswa (Khusus Guru) -->
+    <div id="studentDetailModal" class="fixed inset-0 bg-black/50 hidden items-center justify-center z-50 p-4">
+        <div class="bg-white rounded-xl shadow-2xl w-full max-w-2xl overflow-hidden transform transition-all scale-95 opacity-0 flex flex-col max-h-[90vh]" id="studentDetailContent">
+            <div class="bg-secondary p-4 flex justify-between items-center text-white shrink-0">
+                <h3 class="font-bold text-lg"><i class="fa-solid fa-user-graduate mr-2"></i>Detail & Progres Anggota</h3>
+                <button onclick="closeStudentDetailModal()" class="text-white hover:text-gray-200"><i class="fa-solid fa-xmark text-xl"></i></button>
+            </div>
+            <div class="p-6 overflow-y-auto flex-grow">
+                <!-- Info Profil -->
+                <div class="bg-gray-50 p-4 rounded-xl border mb-6 flex flex-col sm:flex-row gap-4 items-center sm:items-start text-center sm:text-left">
+                    <div class="w-16 h-16 bg-secondary/20 text-secondary rounded-full flex items-center justify-center text-2xl font-bold">
+                        <i class="fa-solid fa-user"></i>
+                    </div>
+                    <div>
+                        <h4 id="detailStudentName" class="font-bold text-xl text-gray-800">Nama</h4>
+                        <p id="detailStudentEmail" class="text-sm text-gray-500"><i class="fa-solid fa-envelope mr-1"></i> email@mail.com</p>
+                        <p id="detailStudentWA" class="text-sm text-gray-500 mt-1"><i class="fa-brands fa-whatsapp mr-1"></i> 0812xxx6789</p>
+                    </div>
+                </div>
+                
+                <!-- Status Tugas -->
+                <h5 class="font-bold text-gray-700 mb-3 border-b pb-2">Status Submit Laporan</h5>
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200 text-sm">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-4 py-2 text-left font-medium text-gray-500">Judul</th>
+                                <th class="px-4 py-2 text-left font-medium text-gray-500">Status</th>
+                                <th class="px-4 py-2 text-left font-medium text-gray-500">Approval</th>
+                            </tr>
+                        </thead>
+                        <tbody id="detailStudentTasks" class="divide-y divide-gray-100">
+                            <!-- Diisi via JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        /* ==========================================
+           KONFIGURASI UTAMA
+           GANTI URL INI DENGAN URL WEB APP GOOGLE APPS SCRIPT ANDA!
+        ========================================== */
+        const GAS_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxkDpuMdjOiI4mcIZ2CUFSg2UmAUQgbyyVAde_EppbXS1aLRyGu6GlbEqRYF10osIVDYg/exec";
+
+        // State Global
+        let currentUser = JSON.parse(localStorage.getItem('etugas_user')) || null;
+        let globalTasks = [];
+        let globalSubmissions = [];
+        let globalStudents = [];
+        let currentUploadTaskId = null;
+
+        // Inisialisasi Aplikasi
+        window.onload = () => {
+            if (currentUser) {
+                setupUserSession();
+            } else {
+                switchView('loginView');
+            }
+        };
+
+        // UI Helpers
+        function switchView(viewId) {
+            document.querySelectorAll('.view-section').forEach(v => v.classList.remove('active'));
+            document.getElementById(viewId).classList.add('active');
+            
+            const topNav = document.getElementById('topNav');
+            if(viewId === 'loginView' || viewId === 'registerView' || viewId === 'forgotView') {
+                topNav.classList.add('hidden');
+            } else {
+                topNav.classList.remove('hidden');
+                document.getElementById('userNameDisplay').innerHTML = `<i class="fa-solid fa-user-circle mr-1"></i> ${currentUser.nama}`;
+            }
+        }
+
+        function switchStudentTab(tab) {
+            document.getElementById('tab-tugas-baru').classList.add('hidden');
+            document.getElementById('tab-tugas-saya').classList.add('hidden');
+            document.getElementById('btn-tugas-baru').className = 'flex-1 py-2 px-4 rounded-lg font-medium text-sm transition text-gray-500 hover:bg-gray-100';
+            document.getElementById('btn-tugas-saya').className = 'flex-1 py-2 px-4 rounded-lg font-medium text-sm transition text-gray-500 hover:bg-gray-100';
+            
+            document.getElementById('tab-' + tab).classList.remove('hidden');
+            document.getElementById('btn-' + tab).className = 'flex-1 py-2 px-4 rounded-lg font-medium text-sm transition bg-primary text-white';
+        }
+
+        function switchTeacherTab(tab) {
+            document.getElementById('tab-semua-tugas').classList.add('hidden');
+            document.getElementById('tab-buat-tugas').classList.add('hidden');
+            document.getElementById('tab-daftar-siswa').classList.add('hidden');
+            
+            document.getElementById('btn-semua-tugas').className = 'flex-1 py-2 px-4 rounded-lg font-medium text-sm transition text-gray-500 hover:bg-gray-100';
+            document.getElementById('btn-buat-tugas').className = 'flex-1 py-2 px-4 rounded-lg font-medium text-sm transition text-gray-500 hover:bg-gray-100';
+            document.getElementById('btn-daftar-siswa').className = 'flex-1 py-2 px-4 rounded-lg font-medium text-sm transition text-gray-500 hover:bg-gray-100';
+            
+            document.getElementById('tab-' + tab).classList.remove('hidden');
+            document.getElementById('btn-' + tab).className = 'flex-1 py-2 px-4 rounded-lg font-medium text-sm transition bg-secondary text-white';
+        }
+
+        // Wrapper untuk API Call (Menggunakan SweetAlert loading)
+        async function apiCall(action, dataObj, loadingMsg = "Memproses...") {
+            if(GAS_WEB_APP_URL === "ISI_DENGAN_URL_WEB_APP_ANDA_DISINI"){
+                Swal.fire("Error Setup", "Anda belum memasukkan URL Web App Google Apps Script di kode HTML.", "error");
+                throw new Error("URL Kosong");
+            }
+
+            Swal.fire({ title: loadingMsg, allowOutsideClick: false, didOpen: () => { Swal.showLoading() } });
+
+            try {
+                const response = await fetch(GAS_WEB_APP_URL, {
+                    method: 'POST',
+                    body: JSON.stringify({ action: action, data: dataObj })
+                });
+                const result = await response.json();
+                
+                if (result.status === 'success') {
+                    Swal.close();
+                    return result.data;
+                } else {
+                    throw new Error(result.message);
+                }
+            } catch (error) {
+                Swal.fire('Terjadi Kesalahan', error.message || 'Gagal terhubung ke server', 'error');
+                throw error;
+            }
+        }
+
+        // --- AUTENTIKASI ---
+        async function handleLogin(e) {
+            e.preventDefault();
+            const email = document.getElementById('logEmail').value;
+            const password = String(document.getElementById('logPassword').value); // Pastikan password menjadi string
+
+            try {
+                const user = await apiCall('login', { email, password }, "Mengecek kredensial...");
+                localStorage.setItem('etugas_user', JSON.stringify(user));
+                currentUser = user;
+                setupUserSession();
+                
+                Swal.fire({
+                    icon: 'success', title: 'Login Berhasil', text: `Selamat datang, ${user.nama}`, timer: 1500, showConfirmButton: false
+                });
+            } catch(e) { 
+                // Error dihandle di apiCall
+                console.error(e.message); 
+            }
+        }
+
+        async function handleRegister(e) {
+            e.preventDefault();
+            const nama = document.getElementById('regNama').value;
+            const email = document.getElementById('regEmail').value;
+            const noWA = document.getElementById('regWA').value;
+            const password = document.getElementById('regPassword').value;
+            const confirm = document.getElementById('regConfirmPassword').value;
+
+            if (password !== confirm) {
+                return Swal.fire('Oops!', 'Password dan konfirmasi tidak cocok.', 'warning');
+            }
+
+            try {
+                const user = await apiCall('register', { nama, email, noWA, password }, "Mendaftarkan akun...");
+                localStorage.setItem('etugas_user', JSON.stringify(user));
+                currentUser = user;
+                setupUserSession();
+                
+                Swal.fire({ icon: 'success', title: 'Pendaftaran Berhasil', text: 'Akun Anda siap digunakan.', timer: 1500, showConfirmButton: false });
+            } catch(e) {}
+        }
+
+        async function handleForgot(e) {
+            e.preventDefault();
+            const email = document.getElementById('forgotEmail').value;
+            try {
+                const msg = await apiCall('forgotPassword', { email }, "Mencari data dan mengirim email...");
+                Swal.fire('Terkirim!', msg, 'success');
+                document.getElementById('forgotForm').reset();
+                switchView('loginView');
+            } catch(e) {}
+        }
+
+        function logout() {
+            Swal.fire({
+                title: 'Konfirmasi', text: "Yakin ingin keluar?", icon: 'question', showCancelButton: true, confirmButtonText: 'Ya, Keluar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    localStorage.removeItem('etugas_user');
+                    currentUser = null;
+                    document.getElementById('loginForm').reset();
+                    switchView('loginView');
+                }
+            });
+        }
+
+        // --- SESSION ROUTING ---
+        function setupUserSession() {
+            if (currentUser.role === 'guru') {
+                switchView('teacherDashboard');
+                fetchTeacherData();
+            } else {
+                switchView('studentDashboard');
+                fetchStudentData();
+            }
+        }
+
+        // --- FUNGSI GURU ---
+        async function fetchTeacherData() {
+            try {
+                const tasks = await apiCall('getAssignments', {}, "Mengambil data laporan...");
+                globalTasks = tasks;
+                // Isi dropdown filter
+                const filterTask = document.getElementById('filterTask');
+                filterTask.innerHTML = '<option value="ALL">Semua Laporan</option>';
+                tasks.forEach(t => {
+                    filterTask.innerHTML += `<option value="${t.TaskID}">${t.Judul}</option>`;
+                });
+
+                const subs = await apiCall('getAllSubmissions', {}, "Mengambil data submition...");
+                globalSubmissions = subs;
+                
+                const students = await apiCall('getAllStudents', {}, "Mengambil data anggota...");
+                globalStudents = students;
+
+                renderTeacherSubmissions();
+                renderTeacherStudents();
+            } catch(e) {}
+        }
+
+        function renderTeacherSubmissions() {
+            const tbody = document.getElementById('teacherSubmissionsList');
+            const filterTsk = document.getElementById('filterTask').value;
+            const filterStd = document.getElementById('filterStudent').value.toLowerCase();
+
+            let html = '';
+            let filtered = globalSubmissions.filter(s => {
+                let matchTask = filterTsk === 'ALL' || s.TaskID === filterTsk;
+                let matchStd = s.NamaSiswa.toLowerCase().includes(filterStd);
+                return matchTask && matchStd;
+            });
+
+            if (filtered.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="5" class="px-4 py-8 text-center text-gray-500">Belum ada data.</td></tr>`;
+                return;
+            }
+
+            // Urutkan berdasarkan waktu terbaru
+            filtered.sort((a,b) => new Date(b.Timestamp) - new Date(a.Timestamp));
+
+            filtered.forEach(s => {
+                const dateStr = new Date(s.Timestamp).toLocaleString('id-ID');
+                let statusBadge = s.Status.includes('Menunggu') ? 
+                    `<span class="px-2 py-1 bg-yellow-100 text-yellow-800 rounded-full text-xs font-medium">${s.Status}</span>` :
+                    (s.Status === 'Disetujui' ? `<span class="px-2 py-1 bg-green-100 text-green-800 rounded-full text-xs font-medium">Disetujui</span>` : 
+                    `<span class="px-2 py-1 bg-red-100 text-red-800 rounded-full text-xs font-medium">Ditolak</span>`);
+
+                html += `
+                <tr class="hover:bg-gray-50">
+                    <td class="px-4 py-3 whitespace-nowrap">
+                        <div class="font-medium text-gray-900">${s.NamaSiswa}</div>
+                        <div class="text-xs text-gray-500">${s.EmailSiswa}</div>
+                    </td>
+                    <td class="px-4 py-3 text-gray-700">${s.JudulTugas}</td>
+                    <td class="px-4 py-3 text-xs text-gray-500">${dateStr}</td>
+                    <td class="px-4 py-3 text-center">
+                        <a href="${s.FileURL}" target="_blank" class="inline-flex items-center text-primary hover:text-indigo-900 bg-indigo-50 px-3 py-1 rounded-lg transition">
+                            <i class="fa-solid fa-file-download mr-1"></i> Lihat
+                        </a>
+                    </td>
+                    <td class="px-4 py-3 text-center space-y-2">
+                        <div>${statusBadge}</div>
+                        ${s.Status.includes('Menunggu') ? `
+                        <div class="flex justify-center space-x-1 mt-1">
+                            <button onclick="approveTask('${s.SubID}', 'Disetujui')" class="p-1.5 bg-green-500 text-white rounded hover:bg-green-600 tooltip" title="Setujui"><i class="fa-solid fa-check"></i></button>
+                            <button onclick="approveTask('${s.SubID}', 'Revisi/Ditolak')" class="p-1.5 bg-red-500 text-white rounded hover:bg-red-600 tooltip" title="Tolak"><i class="fa-solid fa-xmark"></i></button>
+                        </div>
+                        `: ''}
+                    </td>
+                </tr>`;
+            });
+            tbody.innerHTML = html;
+        }
+
+        async function approveTask(subId, statusStr) {
+            try {
+                await apiCall('approveSubmission', { subId: subId, status: statusStr }, "Mengupdate status...");
+                Swal.fire({ icon: 'success', title: 'Berhasil', text: `Status diubah menjadi ${statusStr}`, timer: 1500, showConfirmButton: false });
+                fetchTeacherData(); // Refresh data
+            } catch(e) {}
+        }
+
+        async function handleCreateTask(e) {
+            e.preventDefault();
+            const judul = document.getElementById('taskTitle').value;
+            const deskripsi = document.getElementById('taskDesc').value;
+            const deadline = document.getElementById('taskDeadline').value; // format: YYYY-MM-DDTHH:MM
+
+            try {
+                await apiCall('createAssignment', { judul, deskripsi, deadline }, "Menyimpan Permintaan Submit Laporan baru...");
+                Swal.fire('Berhasil', 'Permintaan Submit Laporan baru telah diterbitkan.', 'success');
+                document.getElementById('createTaskForm').reset();
+                fetchTeacherData();
+                switchTeacherTab('semua-tugas');
+            } catch(e) {}
+        }
+
+        function renderTeacherStudents() {
+            const tbody = document.getElementById('teacherStudentsList');
+            let html = '';
+            
+            // Pengecekan aman jika data kosong
+            if (!globalStudents || globalStudents.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="4" class="px-6 py-8 text-center text-gray-500">Belum ada anggota yang mendaftar.</td></tr>`;
+                return;
+            }
+
+            globalStudents.forEach(s => {
+                // Perbaikan: Konversi paksa data nomor WA menjadi String/Teks agar terhindar dari Error "replace is not a function"
+                let noWaString = String(s.NoWA || '');
+                let waLink = noWaString.replace(/^0/, '62');
+
+                html += `
+                <tr class="hover:bg-gray-50">
+                    <td class="px-6 py-4 whitespace-nowrap font-medium text-gray-900 flex items-center">
+                        <i class="fa-solid fa-circle-user text-gray-400 mr-2 text-lg"></i> ${s.Nama}
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-gray-500">${s.Email}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-gray-500">
+                        <a href="https://wa.me/${waLink}" target="_blank" class="text-green-600 hover:underline"><i class="fa-brands fa-whatsapp"></i> ${noWaString}</a>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-center">
+                        <button onclick="openStudentDetail('${s.Email}')" class="bg-indigo-50 text-indigo-600 hover:bg-indigo-100 px-3 py-1.5 rounded-lg text-sm font-medium transition">
+                            <i class="fa-solid fa-eye mr-1"></i> Detail Profil & Laporan
+                        </button>
+                    </td>
+                </tr>`;
+            });
+            tbody.innerHTML = html;
+        }
+
+        function openStudentDetail(email) {
+            const student = globalStudents.find(s => s.Email === email);
+            if (!student) return;
+
+            document.getElementById('detailStudentName').innerText = student.Nama;
+            document.getElementById('detailStudentEmail').innerHTML = `<i class="fa-solid fa-envelope mr-1"></i> ${student.Email}`;
+            document.getElementById('detailStudentWA').innerHTML = `<i class="fa-brands fa-whatsapp mr-1"></i> ${student.NoWA}`;
+
+            const tbody = document.getElementById('detailStudentTasks');
+            let taskHtml = '';
+
+            // Periksa semua tugas dan status pengerjaan spesifik dari siswa ini
+            globalTasks.forEach(task => {
+                const submission = globalSubmissions.find(sub => sub.TaskID === task.TaskID && sub.EmailSiswa === email);
+                
+                let statusBadge = submission 
+                    ? `<span class="px-2 py-1 bg-green-100 text-green-700 rounded-full text-xs font-semibold"><i class="fa-solid fa-check mr-1"></i>Sudah Dikirim</span>` 
+                    : `<span class="px-2 py-1 bg-red-100 text-red-700 rounded-full text-xs font-semibold"><i class="fa-solid fa-xmark mr-1"></i>Belum Mengerjakan</span>`;
+                
+                let statusApproval = submission ? submission.Status : '-';
+                let actionBtn = submission 
+                    ? `<a href="${submission.FileURL}" target="_blank" class="text-primary hover:underline text-xs"><i class="fa-solid fa-link"></i> Buka File</a>` 
+                    : '';
+
+                taskHtml += `
+                <tr class="hover:bg-gray-50">
+                    <td class="px-4 py-3 font-medium text-gray-800">${task.Judul}</td>
+                    <td class="px-4 py-3">${statusBadge}</td>
+                    <td class="px-4 py-3 text-xs text-gray-500">
+                        <div class="font-semibold mb-1">${statusApproval}</div>
+                        ${actionBtn}
+                    </td>
+                </tr>`;
+            });
+
+            if (globalTasks.length === 0) {
+                taskHtml = `<tr><td colspan="3" class="px-4 py-6 text-center text-gray-500">Belum ada laporan yang dibuat.</td></tr>`;
+            }
+
+            tbody.innerHTML = taskHtml;
+
+            const modal = document.getElementById('studentDetailModal');
+            const content = document.getElementById('studentDetailContent');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            setTimeout(() => {
+                content.classList.remove('scale-95', 'opacity-0');
+                content.classList.add('scale-100', 'opacity-100');
+            }, 10);
+        }
+
+        function closeStudentDetailModal() {
+            const modal = document.getElementById('studentDetailModal');
+            const content = document.getElementById('studentDetailContent');
+            content.classList.remove('scale-100', 'opacity-100');
+            content.classList.add('scale-95', 'opacity-0');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+            }, 300);
+        }
+
+        // --- FUNGSI SISWA ---
+        async function fetchStudentData() {
+            try {
+                // Fetch Tugas
+                globalTasks = await apiCall('getAssignments', {}, "Memuat laporan...");
+                // Fetch Submission
+                globalSubmissions = await apiCall('getMySubmissions', { email: currentUser.email }, "Menyiapkan dashboard...");
+                
+                renderStudentTasks();
+                renderStudentSubmissions();
+            } catch(e) {}
+        }
+
+        function renderStudentTasks() {
+            const container = document.getElementById('studentTasksList');
+            let html = '';
+            
+            // Urutkan tugas terbaru di atas
+            let sortedTasks = [...globalTasks].sort((a,b) => new Date(b.Timestamp) - new Date(a.Timestamp));
+            
+            // Filter tugas yang belum dikerjakan
+            let pendingTasks = sortedTasks.filter(t => !globalSubmissions.some(s => s.TaskID === t.TaskID));
+
+            if(pendingTasks.length === 0) {
+                container.innerHTML = `<div class="col-span-2 text-center py-10 bg-white rounded-xl shadow-sm text-gray-500">
+                    <i class="fa-solid fa-check-circle text-4xl text-green-300 mb-2"></i><br>Anda sudah menyelesaikan semua laporan.
+                </div>`;
+                return;
+            }
+
+            pendingTasks.forEach(t => {
+                // Hitung sisa waktu
+                const dlDate = new Date(t.Deadline);
+                const isLate = new Date() > dlDate;
+                const dlStr = dlDate.toLocaleString('id-ID');
+                const badgeColor = isLate ? 'bg-red-100 text-red-700' : 'bg-blue-100 text-blue-700';
+
+                html += `
+                <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5 flex flex-col hover:shadow-md transition">
+                    <div class="flex-grow">
+                        <div class="flex justify-between items-start mb-2">
+                            <h4 class="font-bold text-gray-900 text-lg">${t.Judul}</h4>
+                            <span class="text-[10px] font-bold px-2 py-1 rounded ${badgeColor}"><i class="fa-regular fa-clock"></i> ${dlStr}</span>
+                        </div>
+                        <p class="text-gray-600 text-sm mb-4 line-clamp-3">${t.Deskripsi}</p>
+                    </div>
+                    <button onclick="openUploadModal('${t.TaskID}')" class="w-full mt-2 py-2 bg-primary hover:bg-indigo-700 text-white rounded-lg text-sm font-semibold transition flex justify-center items-center">
+                        <i class="fa-solid fa-cloud-arrow-up mr-2"></i> Kerjakan & Upload
+                    </button>
+                </div>`;
+            });
+            container.innerHTML = html;
+        }
+
+        function renderStudentSubmissions() {
+            const tbody = document.getElementById('studentSubmissionsList');
+            if (globalSubmissions.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="4" class="px-6 py-8 text-center text-gray-500">Anda belum mengumpulkan laporan.</td></tr>`;
+                return;
+            }
+
+            let html = '';
+            // Urutkan terbaru
+            let sortedSubs = [...globalSubmissions].sort((a,b) => new Date(b.Timestamp) - new Date(a.Timestamp));
+
+            sortedSubs.forEach(s => {
+                const dateStr = new Date(s.Timestamp).toLocaleString('id-ID');
+                let statusClass = s.Status === 'Disetujui' ? 'bg-green-100 text-green-800' : 
+                                 (s.Status.includes('Ditolak') ? 'bg-red-100 text-red-800' : 'bg-yellow-100 text-yellow-800');
+
+                html += `
+                <tr class="hover:bg-gray-50">
+                    <td class="px-6 py-4 whitespace-nowrap font-medium text-gray-900">${s.JudulTugas}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${dateStr}</td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <a href="${s.FileURL}" target="_blank" class="text-primary hover:underline text-sm"><i class="fa-solid fa-paperclip"></i> File Tugas</a>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <span class="px-2.5 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${statusClass}">
+                            ${s.Status}
+                        </span>
+                    </td>
+                </tr>`;
+            });
+            tbody.innerHTML = html;
+        }
+
+        // --- FUNGSI UPLOAD ---
+        function openUploadModal(taskId) {
+            const task = globalTasks.find(t => t.TaskID === taskId);
+            if(!task) return;
+            
+            currentUploadTaskId = taskId;
+            document.getElementById('uploadTaskTitle').innerText = task.Judul;
+            document.getElementById('uploadTaskDesc').innerText = task.Deskripsi;
+            
+            // Reset form
+            document.getElementById('uploadForm').reset();
+            document.getElementById('fileNameDisplay').classList.add('hidden');
+            document.getElementById('theName').innerText = '';
+
+            const modal = document.getElementById('uploadModal');
+            const content = document.getElementById('uploadModalContent');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            setTimeout(() => {
+                content.classList.remove('scale-95', 'opacity-0');
+                content.classList.add('scale-100', 'opacity-100');
+            }, 10);
+        }
+
+        function closeUploadModal() {
+            const modal = document.getElementById('uploadModal');
+            const content = document.getElementById('uploadModalContent');
+            content.classList.remove('scale-100', 'opacity-100');
+            content.classList.add('scale-95', 'opacity-0');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+                currentUploadTaskId = null;
+            }, 300);
+        }
+
+        function updateFileName() {
+            const fileInput = document.getElementById('fileInput');
+            const display = document.getElementById('fileNameDisplay');
+            const theName = document.getElementById('theName');
+            
+            if (fileInput.files.length > 0) {
+                const file = fileInput.files[0];
+                // Check size (Max 10MB)
+                if(file.size > 10 * 1024 * 1024) {
+                    Swal.fire('File Terlalu Besar', 'Maksimal ukuran file adalah 10MB', 'error');
+                    fileInput.value = '';
+                    display.classList.add('hidden');
+                    return;
+                }
+                theName.innerText = file.name;
+                display.classList.remove('hidden');
+            } else {
+                display.classList.add('hidden');
+            }
+        }
+
+        async function handleUploadTask(e) {
+            e.preventDefault();
+            const fileInput = document.getElementById('fileInput');
+            if (fileInput.files.length === 0) return;
+
+            const file = fileInput.files[0];
+            const task = globalTasks.find(t => t.TaskID === currentUploadTaskId);
+
+            // Tampilkan loading kustom
+            Swal.fire({
+                title: 'Mengunggah File...',
+                html: 'Tunggu sebentar, sedang mengunggah file.',
+                allowOutsideClick: false,
+                didOpen: () => { Swal.showLoading() }
+            });
+
+            try {
+                const base64Data = await fileToBase64(file);
+                const payload = {
+                    taskId: task.TaskID,
+                    judulTugas: task.Judul,
+                    emailSiswa: currentUser.email,
+                    namaSiswa: currentUser.nama,
+                    fileName: `${currentUser.nama.replace(/\s+/g, '_')}_${file.name}`,
+                    mimeType: file.type || 'application/octet-stream',
+                    fileBase64: base64Data
+                };
+
+                await fetch(GAS_WEB_APP_URL, {
+                    method: 'POST',
+                    body: JSON.stringify({ action: 'uploadSubmission', data: payload })
+                });
+
+                Swal.fire({ icon: 'success', title: 'Berhasil!', text: 'File Anda berhasil diunggah.', timer: 2000, showConfirmButton: false });
+                closeUploadModal();
+                fetchStudentData(); // Refresh UI
+                switchStudentTab('tugas-saya');
+                
+            } catch (error) {
+                Swal.fire('Gagal Upload', 'Terjadi kesalahan saat mengunggah file. Pastikan koneksi stabil.', 'error');
+            }
+        }
+
+        // Helper Konversi File
+        function fileToBase64(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = () => resolve(reader.result.split(',')[1]);
+                reader.onerror = error => reject(error);
+            });
+        }
+    </script>
+</body>
+</html>
