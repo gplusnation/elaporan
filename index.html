@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>E-Laporan | Portal Laporan</title>
+    <title>E-Laporan | Portal Laporan Online</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- FontAwesome -->
@@ -77,11 +77,11 @@
                             
                         </div>
                         <input type="password" id="logPassword" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary outline-none transition">
-                        <a href="#" onclick="switchView('forgotView')" class="text-xs text-primary hover:underline">Lupa Password?</a>
                     </div>
                     <button type="submit" class="w-full bg-primary hover:bg-indigo-700 text-white font-semibold py-2.5 rounded-lg transition shadow-md">
                         Masuk
                     </button>
+                    <a href="#" onclick="switchView('forgotView')" class="text-xs text-primary hover:underline">Lupa Password?</a>
                 </form>
                 <div class="mt-6 text-center text-sm text-gray-600">
                     Belum punya akun? <a href="#" onclick="switchView('registerView')" class="text-primary font-semibold hover:underline">Daftar sekarang</a>
@@ -89,7 +89,7 @@
             </div>
             <!-- Petunjuk Guru Default -->
             <div class="mt-4 text-xs text-center text-gray-400">
-                copyright 2026<br> Dev by gplusnation
+                copyright 2026 :<br>..
             </div>
         </div>
 
@@ -97,7 +97,7 @@
         <div id="registerView" class="view-section w-full max-w-md">
             <div class="bg-white rounded-2xl shadow-xl p-8">
                 <div class="text-center mb-6">
-                    <h2 class="text-2xl font-bold text-gray-900">Daftar Akun Anggota</h2>
+                    <h2 class="text-2xl font-bold text-gray-900">Daftar Akun</h2>
                     <p class="text-gray-500 text-sm mt-1">Lengkapi data diri Anda di bawah ini</p>
                 </div>
                 <form id="registerForm" onsubmit="handleRegister(event)" class="space-y-4">
@@ -114,7 +114,7 @@
                         <input type="tel" id="regWA" required placeholder="628xx..." class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary outline-none transition">
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Buat Password</label>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Buat Password Baru</label>
                         <input type="password" id="regPassword" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary outline-none transition">
                     </div>
                     <div>
@@ -143,7 +143,7 @@
                 </div>
                 <form id="forgotForm" onsubmit="handleForgot(event)" class="space-y-4">
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Email Terdaftar</label>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Masukan email yang terdaftar</label>
                         <input type="email" id="forgotEmail" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary outline-none transition">
                     </div>
                     <button type="submit" class="w-full bg-yellow-500 hover:bg-yellow-600 text-white font-semibold py-2.5 rounded-lg transition shadow-md">
@@ -161,10 +161,13 @@
             <!-- Tabs -->
             <div class="flex space-x-2 bg-white p-2 rounded-xl shadow-sm mb-6 overflow-x-auto">
                 <button onclick="switchStudentTab('tugas-baru')" id="btn-tugas-baru" class="flex-1 py-2 px-4 rounded-lg font-medium text-sm transition bg-primary text-white">
-                    <i class="fa-solid fa-book-open mr-2"></i>Laporan Baru
+                    <i class="fa-solid fa-book-open mr-2"></i>Permintaan Laporan
                 </button>
                 <button onclick="switchStudentTab('tugas-saya')" id="btn-tugas-saya" class="flex-1 py-2 px-4 rounded-lg font-medium text-sm transition text-gray-500 hover:bg-gray-100">
-                    <i class="fa-solid fa-folder-open mr-2"></i>Laporan Saya
+                    <i class="fa-solid fa-folder-open mr-2"></i>Laporan Terkirim
+                </button>
+                <button onclick="switchStudentTab('profil')" id="btn-profil" class="flex-1 py-2 px-4 rounded-lg font-medium text-sm transition text-gray-500 hover:bg-gray-100">
+                    <i class="fa-solid fa-user-edit mr-2"></i>Profil
                 </button>
             </div>
 
@@ -183,7 +186,7 @@
                             <thead class="bg-gray-50">
                                 <tr>
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Laporan</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Waktu Submit</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Waktu</th>
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">File</th>
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
                                 </tr>
@@ -195,6 +198,74 @@
                     </div>
                 </div>
             </div>
+
+            <!-- Tab Content: Profil Saya -->
+            <div id="tab-profil" class="hidden">
+                <div class="bg-white rounded-xl shadow-sm p-6">
+                    <h3 class="text-lg font-bold mb-4 border-b pb-2"><i class="fa-solid fa-address-card mr-2 text-primary"></i> Data Diri & Profil</h3>
+                    <form id="profileForm" onsubmit="handleUpdateProfile(event)" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Email (ID Tetap)</label>
+                            <input type="email" id="profEmail" readonly class="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-100 text-gray-500 outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Nama Lengkap</label>
+                            <input type="text" id="profNama" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">No. WhatsApp</label>
+                            <input type="tel" id="profWA" required placeholder="628xxxx...." class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">SK</label>
+                            <input type="text" id="profSK" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">BA</label>
+                            <input type="text" id="profBA" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Kedudukan</label>
+                            <input type="text" id="profKedudukan" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Tempat, Tanggal Lahir</label>
+                            <input type="text" id="profTTL" placeholder="Cth: Jakarta, 01 Jan 2000" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">No. KTA</label>
+                            <input type="text" id="profKTA" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary outline-none">
+                        </div>
+                        <div class="md:col-span-2">
+                            <label class="block text-sm font-medium text-gray-700">Alamat Lengkap</label>
+                            <textarea id="profAlamat" rows="2" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary outline-none"></textarea>
+                        </div>
+                        <div class="md:col-span-2">
+                            <label class="block text-sm font-medium text-gray-700">Lain-lain</label>
+                            <input type="text" id="profLain" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary outline-none">
+                        </div>
+                        
+                        <div class="md:col-span-2 mt-4 border-t pt-4">
+                            <h4 class="font-bold text-gray-700 mb-2">Ganti Password</h4>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700">Password Baru</label>
+                                    <input type="password" id="profPass" placeholder="(Kosongkan jika tidak ingin diubah)" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary outline-none">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700">Ulangi Password Baru</label>
+                                    <input type="password" id="profPassConf" placeholder="Ulangi password" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary outline-none">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="md:col-span-2 mt-4">
+                            <button type="submit" class="w-full bg-primary hover:bg-indigo-700 text-white font-semibold py-3 rounded-lg transition shadow-md">
+                                <i class="fa-solid fa-save mr-2"></i> Simpan Perubahan Profil
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
         </div>
 
         <!-- ================= TEACHER DASHBOARD ================= -->
@@ -202,32 +273,37 @@
             <!-- Tabs -->
             <div class="flex space-x-2 bg-white p-2 rounded-xl shadow-sm mb-6 overflow-x-auto">
                 <button onclick="switchTeacherTab('semua-tugas')" id="btn-semua-tugas" class="flex-1 py-2 px-4 rounded-lg font-medium text-sm transition bg-secondary text-white">
-                    <i class="fa-solid fa-list-check mr-2"></i>Daftar Laporan
+                    <i class="fa-solid fa-list-check mr-2"></i>List Laporan
                 </button>
                 <button onclick="switchTeacherTab('buat-tugas')" id="btn-buat-tugas" class="flex-1 py-2 px-4 rounded-lg font-medium text-sm transition text-gray-500 hover:bg-gray-100">
-                    <i class="fa-solid fa-plus-circle mr-2"></i>Permintaan Submit Laporan
+                    <i class="fa-solid fa-plus-circle mr-2"></i>Request Laporan
                 </button>
                 <button onclick="switchTeacherTab('daftar-siswa')" id="btn-daftar-siswa" class="flex-1 py-2 px-4 rounded-lg font-medium text-sm transition text-gray-500 hover:bg-gray-100">
-                    <i class="fa-solid fa-users mr-2"></i>Daftar Anggota
+                    <i class="fa-solid fa-users mr-2"></i>Data Anggota
                 </button>
             </div>
 
             <!-- Tab: Semua Pengumpulan (Dengan Filter) -->
             <div id="tab-semua-tugas" class="space-y-4">
-                <div class="bg-white p-4 rounded-xl shadow-sm flex flex-col sm:flex-row gap-4 items-end">
-                    <div class="w-full sm:w-1/3">
+                <div class="bg-white p-4 rounded-xl shadow-sm flex flex-col sm:flex-row gap-3 items-end">
+                    <div class="w-full sm:w-1/4">
                         <label class="block text-xs font-medium text-gray-500 mb-1">Filter Laporan</label>
                         <select id="filterTask" onchange="renderTeacherSubmissions()" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm outline-none">
-                            <option value="ALL">Semua Laporan</option>
+                            <option value="ALL">Semua</option>
                         </select>
                     </div>
-                    <div class="w-full sm:w-1/3">
+                    <div class="w-full sm:w-1/4">
                         <label class="block text-xs font-medium text-gray-500 mb-1">Filter Anggota</label>
-                        <input type="text" id="filterStudent" oninput="renderTeacherSubmissions()" placeholder="Ketik nama anggota" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm outline-none">
+                        <input type="text" id="filterStudent" oninput="renderTeacherSubmissions()" placeholder="Ketik nama..." class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm outline-none">
                     </div>
-                    <div class="w-full sm:w-1/3">
+                    <div class="w-full sm:w-1/4">
                         <button onclick="fetchTeacherData()" class="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium py-2 rounded-lg transition text-sm">
-                            <i class="fa-solid fa-rotate-right mr-1"></i> Refresh Data
+                            <i class="fa-solid fa-rotate-right mr-1"></i> Segarkan Data
+                        </button>
+                    </div>
+                    <div class="w-full sm:w-1/4">
+                        <button onclick="sendManualReminder()" class="w-full bg-yellow-500 hover:bg-yellow-600 text-white font-medium py-2 rounded-lg transition text-sm shadow-sm">
+                            <i class="fa-solid fa-bell mr-1"></i> Kirim Reminder
                         </button>
                     </div>
                 </div>
@@ -237,7 +313,7 @@
                         <table class="min-w-full divide-y divide-gray-200">
                             <thead class="bg-gray-50">
                                 <tr>
-                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Anggota</th>
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Nama</th>
                                     <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Laporan</th>
                                     <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Waktu</th>
                                     <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase text-center">File</th>
@@ -255,10 +331,10 @@
             <!-- Tab: Buat Tugas Baru -->
             <div id="tab-buat-tugas" class="hidden">
                 <div class="bg-white rounded-xl shadow-sm p-6 max-w-2xl mx-auto">
-                    <h3 class="text-lg font-bold mb-4 border-b pb-2">Form Permintaan Submit Laporan</h3>
+                    <h3 class="text-lg font-bold mb-4 border-b pb-2">Form Request Laporan</h3>
                     <form id="createTaskForm" onsubmit="handleCreateTask(event)" class="space-y-4">
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Judul Laporan</label>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Judul </label>
                             <input type="text" id="taskTitle" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-secondary outline-none">
                         </div>
                         <div>
@@ -270,7 +346,7 @@
                             <input type="datetime-local" id="taskDeadline" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-secondary outline-none">
                         </div>
                         <button type="submit" class="w-full bg-secondary hover:bg-green-600 text-white font-semibold py-2.5 rounded-lg transition shadow-md mt-4">
-                            <i class="fa-solid fa-paper-plane mr-2"></i> Publikasikan
+                            <i class="fa-solid fa-paper-plane mr-2"></i> Terbitkan 
                         </button>
                     </form>
                 </div>
@@ -311,7 +387,7 @@
                 <button onclick="closeUploadModal()" class="text-white hover:text-gray-200"><i class="fa-solid fa-xmark text-xl"></i></button>
             </div>
             <div class="p-6">
-                <p id="uploadTaskTitle" class="font-semibold text-gray-800 mb-1">Judul Laporan</p>
+                <p id="uploadTaskTitle" class="font-semibold text-gray-800 mb-1">Judul </p>
                 <p id="uploadTaskDesc" class="text-sm text-gray-500 mb-4 bg-gray-50 p-2 rounded border">Deskripsi</p>
                 
                 <form id="uploadForm" onsubmit="handleUploadTask(event)">
@@ -343,24 +419,33 @@
             <div class="p-6 overflow-y-auto flex-grow">
                 <!-- Info Profil -->
                 <div class="bg-gray-50 p-4 rounded-xl border mb-6 flex flex-col sm:flex-row gap-4 items-center sm:items-start text-center sm:text-left">
-                    <div class="w-16 h-16 bg-secondary/20 text-secondary rounded-full flex items-center justify-center text-2xl font-bold">
+                    <div class="w-16 h-16 bg-secondary/20 text-secondary rounded-full flex items-center justify-center text-2xl font-bold shrink-0">
                         <i class="fa-solid fa-user"></i>
                     </div>
-                    <div>
-                        <h4 id="detailStudentName" class="font-bold text-xl text-gray-800">Nama</h4>
-                        <p id="detailStudentEmail" class="text-sm text-gray-500"><i class="fa-solid fa-envelope mr-1"></i> email@mail.com</p>
-                        <p id="detailStudentWA" class="text-sm text-gray-500 mt-1"><i class="fa-brands fa-whatsapp mr-1"></i> 0812xxx6789</p>
+                    <div class="w-full">
+                        <h4 id="detailStudentName" class="font-bold text-xl text-gray-800 border-b pb-2 mb-3">Nama </h4>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-2 text-sm text-gray-600 text-left">
+                            <p id="detailStudentEmail"><i class="fa-solid fa-envelope w-5 text-gray-400"></i> email@mail.com</p>
+                            <p id="detailStudentWA"><i class="fa-brands fa-whatsapp w-5 text-gray-400"></i> 628123456789</p>
+                            <p id="detailStudentSK"><i class="fa-solid fa-file-signature w-5 text-gray-400"></i> <strong>SK:</strong> -</p>
+                            <p id="detailStudentBA"><i class="fa-solid fa-file-contract w-5 text-gray-400"></i> <strong>BA:</strong> -</p>
+                            <p id="detailStudentKedudukan"><i class="fa-solid fa-sitemap w-5 text-gray-400"></i> <strong>Kedudukan:</strong> -</p>
+                            <p id="detailStudentTTL"><i class="fa-solid fa-calendar-days w-5 text-gray-400"></i> <strong>TTL:</strong> -</p>
+                            <p id="detailStudentKTA"><i class="fa-solid fa-id-card w-5 text-gray-400"></i> <strong>No. KTA:</strong> -</p>
+                            <p id="detailStudentAlamat" class="md:col-span-2"><i class="fa-solid fa-map-location-dot w-5 text-gray-400"></i> <strong>Alamat:</strong> -</p>
+                            <p id="detailStudentLain" class="md:col-span-2"><i class="fa-solid fa-circle-info w-5 text-gray-400"></i> <strong>Lain-lain:</strong> -</p>
+                        </div>
                     </div>
                 </div>
                 
                 <!-- Status Tugas -->
-                <h5 class="font-bold text-gray-700 mb-3 border-b pb-2">Status Submit Laporan</h5>
+                <h5 class="font-bold text-gray-700 mb-3 border-b pb-2">Status </h5>
                 <div class="overflow-x-auto">
                     <table class="min-w-full divide-y divide-gray-200 text-sm">
                         <thead class="bg-gray-50">
                             <tr>
-                                <th class="px-4 py-2 text-left font-medium text-gray-500">Judul</th>
-                                <th class="px-4 py-2 text-left font-medium text-gray-500">Status</th>
+                                <th class="px-4 py-2 text-left font-medium text-gray-500">Judul </th>
+                                <th class="px-4 py-2 text-left font-medium text-gray-500">Status Submition</th>
                                 <th class="px-4 py-2 text-left font-medium text-gray-500">Approval</th>
                             </tr>
                         </thead>
@@ -378,7 +463,7 @@
            KONFIGURASI UTAMA
            GANTI URL INI DENGAN URL WEB APP GOOGLE APPS SCRIPT ANDA!
         ========================================== */
-        const GAS_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxkDpuMdjOiI4mcIZ2CUFSg2UmAUQgbyyVAde_EppbXS1aLRyGu6GlbEqRYF10osIVDYg/exec";
+        const GAS_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzHNSa6e8cuNA3NjmtgorM9RAyL0-9GZbg9M6htXF-OmQBMaPmaC_IccpF0HpkKFC6How/exec";
 
         // State Global
         let currentUser = JSON.parse(localStorage.getItem('etugas_user')) || null;
@@ -413,8 +498,11 @@
         function switchStudentTab(tab) {
             document.getElementById('tab-tugas-baru').classList.add('hidden');
             document.getElementById('tab-tugas-saya').classList.add('hidden');
+            document.getElementById('tab-profil').classList.add('hidden');
+            
             document.getElementById('btn-tugas-baru').className = 'flex-1 py-2 px-4 rounded-lg font-medium text-sm transition text-gray-500 hover:bg-gray-100';
             document.getElementById('btn-tugas-saya').className = 'flex-1 py-2 px-4 rounded-lg font-medium text-sm transition text-gray-500 hover:bg-gray-100';
+            document.getElementById('btn-profil').className = 'flex-1 py-2 px-4 rounded-lg font-medium text-sm transition text-gray-500 hover:bg-gray-100';
             
             document.getElementById('tab-' + tab).classList.remove('hidden');
             document.getElementById('btn-' + tab).className = 'flex-1 py-2 px-4 rounded-lg font-medium text-sm transition bg-primary text-white';
@@ -436,7 +524,7 @@
         // Wrapper untuk API Call (Menggunakan SweetAlert loading)
         async function apiCall(action, dataObj, loadingMsg = "Memproses...") {
             if(GAS_WEB_APP_URL === "ISI_DENGAN_URL_WEB_APP_ANDA_DISINI"){
-                Swal.fire("Error Setup", "Anda belum memasukkan URL Web App Google Apps Script di kode HTML.", "error");
+                Swal.fire("Error Setup", "Anda belum memasukkan URL Web App Google Apps Script.", "error");
                 throw new Error("URL Kosong");
             }
 
@@ -465,21 +553,23 @@
         async function handleLogin(e) {
             e.preventDefault();
             const email = document.getElementById('logEmail').value;
-            const password = String(document.getElementById('logPassword').value); // Pastikan password menjadi string
+            // Paksa password menjadi string
+            const password = String(document.getElementById('logPassword').value);
 
             try {
-                const user = await apiCall('login', { email, password }, "Mengecek kredensial...");
+                const user = await apiCall('login', { email, password }, "login...");
                 localStorage.setItem('etugas_user', JSON.stringify(user));
                 currentUser = user;
                 setupUserSession();
                 
                 Swal.fire({
-                    icon: 'success', title: 'Login Berhasil', text: `Selamat datang, ${user.nama}`, timer: 1500, showConfirmButton: false
+                    icon: 'success', 
+                    title: 'Login Berhasil', 
+                    text: `Selamat datang, ${user.nama}`, 
+                    timer: 1500, 
+                    showConfirmButton: false
                 });
-            } catch(e) { 
-                // Error dihandle di apiCall
-                console.error(e.message); 
-            }
+            } catch(e) { /* Error dihandle di apiCall */ }
         }
 
         async function handleRegister(e) {
@@ -542,19 +632,19 @@
         // --- FUNGSI GURU ---
         async function fetchTeacherData() {
             try {
-                const tasks = await apiCall('getAssignments', {}, "Mengambil data laporan...");
+                const tasks = await apiCall('getAssignments', {}, "Mengambil data...");
                 globalTasks = tasks;
                 // Isi dropdown filter
                 const filterTask = document.getElementById('filterTask');
-                filterTask.innerHTML = '<option value="ALL">Semua Laporan</option>';
+                filterTask.innerHTML = '<option value="ALL">Semua </option>';
                 tasks.forEach(t => {
                     filterTask.innerHTML += `<option value="${t.TaskID}">${t.Judul}</option>`;
                 });
 
-                const subs = await apiCall('getAllSubmissions', {}, "Mengambil data submition...");
+                const subs = await apiCall('getAllSubmissions', {}, "Mengambil data laporan...");
                 globalSubmissions = subs;
                 
-                const students = await apiCall('getAllStudents', {}, "Mengambil data anggota...");
+                const students = await apiCall('getAllStudents', {}, "Mengambil data Anggota...");
                 globalStudents = students;
 
                 renderTeacherSubmissions();
@@ -575,7 +665,7 @@
             });
 
             if (filtered.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="5" class="px-4 py-8 text-center text-gray-500">Belum ada data.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="5" class="px-4 py-8 text-center text-gray-500">Belum ada data pengumpulan.</td></tr>`;
                 return;
             }
 
@@ -631,8 +721,8 @@
             const deadline = document.getElementById('taskDeadline').value; // format: YYYY-MM-DDTHH:MM
 
             try {
-                await apiCall('createAssignment', { judul, deskripsi, deadline }, "Menyimpan Permintaan Submit Laporan baru...");
-                Swal.fire('Berhasil', 'Permintaan Submit Laporan baru telah diterbitkan.', 'success');
+                await apiCall('createAssignment', { judul, deskripsi, deadline }, "Menyimpan tugas baru...");
+                Swal.fire('Berhasil', 'Tugas baru telah diterbitkan.', 'success');
                 document.getElementById('createTaskForm').reset();
                 fetchTeacherData();
                 switchTeacherTab('semua-tugas');
@@ -645,7 +735,7 @@
             
             // Pengecekan aman jika data kosong
             if (!globalStudents || globalStudents.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="4" class="px-6 py-8 text-center text-gray-500">Belum ada anggota yang mendaftar.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="4" class="px-6 py-8 text-center text-gray-500">Belum ada siswa yang mendaftar.</td></tr>`;
                 return;
             }
 
@@ -665,7 +755,7 @@
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap text-center">
                         <button onclick="openStudentDetail('${s.Email}')" class="bg-indigo-50 text-indigo-600 hover:bg-indigo-100 px-3 py-1.5 rounded-lg text-sm font-medium transition">
-                            <i class="fa-solid fa-eye mr-1"></i> Detail Profil & Laporan
+                            <i class="fa-solid fa-eye mr-1"></i> Detail Profil & Tugas
                         </button>
                     </td>
                 </tr>`;
@@ -677,9 +767,16 @@
             const student = globalStudents.find(s => s.Email === email);
             if (!student) return;
 
-            document.getElementById('detailStudentName').innerText = student.Nama;
-            document.getElementById('detailStudentEmail').innerHTML = `<i class="fa-solid fa-envelope mr-1"></i> ${student.Email}`;
-            document.getElementById('detailStudentWA').innerHTML = `<i class="fa-brands fa-whatsapp mr-1"></i> ${student.NoWA}`;
+            document.getElementById('detailStudentName').innerText = student.Nama || '-';
+            document.getElementById('detailStudentEmail').innerHTML = `<i class="fa-solid fa-envelope w-5 text-gray-400"></i> ${student.Email || '-'}`;
+            document.getElementById('detailStudentWA').innerHTML = `<i class="fa-brands fa-whatsapp w-5 text-gray-400"></i> ${student.NoWA || '-'}`;
+            document.getElementById('detailStudentSK').innerHTML = `<i class="fa-solid fa-file-signature w-5 text-gray-400"></i> <strong>SK:</strong> ${student.SK || '-'}`;
+            document.getElementById('detailStudentBA').innerHTML = `<i class="fa-solid fa-file-contract w-5 text-gray-400"></i> <strong>BA:</strong> ${student.BA || '-'}`;
+            document.getElementById('detailStudentKedudukan').innerHTML = `<i class="fa-solid fa-sitemap w-5 text-gray-400"></i> <strong>Kedudukan:</strong> ${student.Kedudukan || '-'}`;
+            document.getElementById('detailStudentTTL').innerHTML = `<i class="fa-solid fa-calendar-days w-5 text-gray-400"></i> <strong>TTL:</strong> ${student.TTL || '-'}`;
+            document.getElementById('detailStudentKTA').innerHTML = `<i class="fa-solid fa-id-card w-5 text-gray-400"></i> <strong>No. KTA:</strong> ${student.NoKTA || '-'}`;
+            document.getElementById('detailStudentAlamat').innerHTML = `<i class="fa-solid fa-map-location-dot w-5 text-gray-400"></i> <strong>Alamat:</strong> ${student.Alamat || '-'}`;
+            document.getElementById('detailStudentLain').innerHTML = `<i class="fa-solid fa-circle-info w-5 text-gray-400"></i> <strong>Lain-lain:</strong> ${student.LainLain || '-'}`;
 
             const tbody = document.getElementById('detailStudentTasks');
             let taskHtml = '';
@@ -690,7 +787,7 @@
                 
                 let statusBadge = submission 
                     ? `<span class="px-2 py-1 bg-green-100 text-green-700 rounded-full text-xs font-semibold"><i class="fa-solid fa-check mr-1"></i>Sudah Dikirim</span>` 
-                    : `<span class="px-2 py-1 bg-red-100 text-red-700 rounded-full text-xs font-semibold"><i class="fa-solid fa-xmark mr-1"></i>Belum Mengerjakan</span>`;
+                    : `<span class="px-2 py-1 bg-red-100 text-red-700 rounded-full text-xs font-semibold"><i class="fa-solid fa-xmark mr-1"></i>Belum Mengirim</span>`;
                 
                 let statusApproval = submission ? submission.Status : '-';
                 let actionBtn = submission 
@@ -709,7 +806,7 @@
             });
 
             if (globalTasks.length === 0) {
-                taskHtml = `<tr><td colspan="3" class="px-4 py-6 text-center text-gray-500">Belum ada laporan yang dibuat.</td></tr>`;
+                taskHtml = `<tr><td colspan="3" class="px-4 py-6 text-center text-gray-500">Belum ada laporan yang di submit angota.</td></tr>`;
             }
 
             tbody.innerHTML = taskHtml;
@@ -739,12 +836,13 @@
         async function fetchStudentData() {
             try {
                 // Fetch Tugas
-                globalTasks = await apiCall('getAssignments', {}, "Memuat laporan...");
+                globalTasks = await apiCall('getAssignments', {}, "Memuat data...");
                 // Fetch Submission
                 globalSubmissions = await apiCall('getMySubmissions', { email: currentUser.email }, "Menyiapkan dashboard...");
                 
                 renderStudentTasks();
                 renderStudentSubmissions();
+                populateProfileForm(); // Isi form profil
             } catch(e) {}
         }
 
@@ -782,7 +880,7 @@
                         <p class="text-gray-600 text-sm mb-4 line-clamp-3">${t.Deskripsi}</p>
                     </div>
                     <button onclick="openUploadModal('${t.TaskID}')" class="w-full mt-2 py-2 bg-primary hover:bg-indigo-700 text-white rounded-lg text-sm font-semibold transition flex justify-center items-center">
-                        <i class="fa-solid fa-cloud-arrow-up mr-2"></i> Kerjakan & Upload
+                        <i class="fa-solid fa-cloud-arrow-up mr-2"></i> Buat & Upload
                     </button>
                 </div>`;
             });
@@ -792,7 +890,7 @@
         function renderStudentSubmissions() {
             const tbody = document.getElementById('studentSubmissionsList');
             if (globalSubmissions.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="4" class="px-6 py-8 text-center text-gray-500">Anda belum mengumpulkan laporan.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="4" class="px-6 py-8 text-center text-gray-500">Anda belum mengumpulkan laporan apapun.</td></tr>`;
                 return;
             }
 
@@ -810,7 +908,7 @@
                     <td class="px-6 py-4 whitespace-nowrap font-medium text-gray-900">${s.JudulTugas}</td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${dateStr}</td>
                     <td class="px-6 py-4 whitespace-nowrap">
-                        <a href="${s.FileURL}" target="_blank" class="text-primary hover:underline text-sm"><i class="fa-solid fa-paperclip"></i> File Tugas</a>
+                        <a href="${s.FileURL}" target="_blank" class="text-primary hover:underline text-sm"><i class="fa-solid fa-paperclip"></i> File Laporan</a>
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap">
                         <span class="px-2.5 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${statusClass}">
@@ -858,6 +956,83 @@
             }, 300);
         }
 
+        // --- FUNGSI PROFIL SISWA ---
+        function populateProfileForm() {
+            document.getElementById('profEmail').value = currentUser.email || '';
+            document.getElementById('profNama').value = currentUser.nama || '';
+            document.getElementById('profWA').value = currentUser.noWA || currentUser.NoWA || '';
+            document.getElementById('profSK').value = currentUser.SK || '';
+            document.getElementById('profBA').value = currentUser.BA || '';
+            document.getElementById('profKedudukan').value = currentUser.Kedudukan || '';
+            document.getElementById('profTTL').value = currentUser.TTL || '';
+            document.getElementById('profKTA').value = currentUser.NoKTA || '';
+            document.getElementById('profAlamat').value = currentUser.Alamat || '';
+            document.getElementById('profLain').value = currentUser.LainLain || '';
+        }
+
+        async function handleUpdateProfile(e) {
+            e.preventDefault();
+            const pass = document.getElementById('profPass').value;
+            const passConf = document.getElementById('profPassConf').value;
+
+            if (pass && pass !== passConf) {
+                return Swal.fire('Error', 'Password baru dan konfirmasi tidak cocok!', 'error');
+            }
+
+            const payload = {
+                email: document.getElementById('profEmail').value, // email tidak diubah
+                nama: document.getElementById('profNama').value,
+                noWA: document.getElementById('profWA').value,
+                SK: document.getElementById('profSK').value,
+                BA: document.getElementById('profBA').value,
+                Kedudukan: document.getElementById('profKedudukan').value,
+                TTL: document.getElementById('profTTL').value,
+                NoKTA: document.getElementById('profKTA').value,
+                Alamat: document.getElementById('profAlamat').value,
+                LainLain: document.getElementById('profLain').value,
+                password: pass // Jika kosong, backend tidak merubah pass
+            };
+
+            try {
+                const updatedUser = await apiCall('updateProfile', payload, 'Menyimpan profil...');
+                localStorage.setItem('etugas_user', JSON.stringify(updatedUser)); // update session
+                currentUser = updatedUser;
+                document.getElementById('userNameDisplay').innerHTML = `<i class="fa-solid fa-user-circle mr-1"></i> ${currentUser.nama}`;
+                
+                // Kosongkan form password setelah berhasil
+                document.getElementById('profPass').value = '';
+                document.getElementById('profPassConf').value = '';
+                
+                Swal.fire('Berhasil', 'Profil Anda telah berhasil diperbarui.', 'success');
+            } catch (err) {}
+        }
+
+        // --- FUNGSI GURU REMINDER ---
+        async function sendManualReminder() {
+            const taskId = document.getElementById('filterTask').value;
+            if (taskId === 'ALL') {
+                return Swal.fire('Pilih Tugas', 'Tentukan satu tugas di Filter Tugas terlebih dahulu sebelum mengirim reminder.', 'warning');
+            }
+
+            const task = globalTasks.find(t => t.TaskID === taskId);
+            
+            Swal.fire({
+                title: 'Kirim Reminder?',
+                text: `Kirim email pengingat untuk tugas "${task.Judul}" ke semua siswa yang BELUM mengumpulkan?`,
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonText: 'Ya, Kirim',
+                cancelButtonText: 'Batal'
+            }).then(async (result) => {
+                if (result.isConfirmed) {
+                    try {
+                        const res = await apiCall('sendManualReminder', { taskId: taskId }, 'Mengirim email massal...');
+                        Swal.fire('Terkirim!', res, 'success');
+                    } catch(e) {}
+                }
+            });
+        }
+
         function updateFileName() {
             const fileInput = document.getElementById('fileInput');
             const display = document.getElementById('fileNameDisplay');
@@ -890,7 +1065,7 @@
             // Tampilkan loading kustom
             Swal.fire({
                 title: 'Mengunggah File...',
-                html: 'Tunggu sebentar, sedang mengunggah file.',
+                html: 'Tunggu sebentar, file sedang di upload.',
                 allowOutsideClick: false,
                 didOpen: () => { Swal.showLoading() }
             });
@@ -912,7 +1087,7 @@
                     body: JSON.stringify({ action: 'uploadSubmission', data: payload })
                 });
 
-                Swal.fire({ icon: 'success', title: 'Berhasil!', text: 'File Anda berhasil diunggah.', timer: 2000, showConfirmButton: false });
+                Swal.fire({ icon: 'success', title: 'Berhasil!', text: 'Tugas Anda berhasil diunggah.', timer: 2000, showConfirmButton: false });
                 closeUploadModal();
                 fetchStudentData(); // Refresh UI
                 switchStudentTab('tugas-saya');
